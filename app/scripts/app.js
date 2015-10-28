@@ -1,3 +1,4 @@
+
 'use strict';
 
 /**
@@ -9,27 +10,42 @@
  * Main module of the application.
  */
 angular.module('formsApp', [
-    'ngRoute',
+    'ui.router',
     'ngSanitize',
     'ngAnimate'
   ])
-  .config(function ($routeProvider, $locationProvider) {
-    $routeProvider
-      .when('/w4', {
-        templateUrl: 'views/w4.html',
+
+  .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+    // For any unmatched url, redirect to /state1
+    $urlRouterProvider.otherwise("/");
+
+    $stateProvider
+      .state('index', {
+        url: "/",
+        templateUrl: "views/main.html",
+        controller: 'MainCtrl',
+        controllerAs: 'main'
+      })
+      .state('w4', {
+        url: "/w4",
+        templateUrl: "views/w4.html",
         controller: 'W4Ctrl',
         controllerAs: 'w4'
       })
-      .when('/w9', {
-        templateUrl: 'views/w9.html',
+      .state('w9', {
+        url: "/w9",
+        templateUrl: "views/w9.html",
         controller: 'W9Ctrl',
         controllerAs: 'w9'
+      })
+      .state('about', {
+        url: "/about",
+        templateUrl: "views/about.html",
+        controller: 'AboutCtrl',
+        controllerAs: 'about'
       });
 
     // configure html5
-    $locationProvider.html5Mode({
-      enabled: true,
-      requireBase: false
-    });
+    $locationProvider.html5Mode(true);
   });
 

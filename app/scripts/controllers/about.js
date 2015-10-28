@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc function
- * @name formsApp.controller:W4Ctrl
+ * @name formsApp.controller:AboutCtrl
  * @description
- * # W4Ctrl
+ * # AboutCtrl
  * Controller of the formsApp
  */
 angular.module('formsApp')
-  .controller('W4Ctrl', function ($scope) {
+  .controller('AboutCtrl', function () {
     this.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
