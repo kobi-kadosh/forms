@@ -8,6 +8,7 @@ var lazypipe = require('lazypipe');
 var rimraf = require('rimraf');
 var wiredep = require('wiredep').stream;
 var runSequence = require('run-sequence');
+var mainBowerFiles = require('main-bower-files');
 
 var yeoman = {
   app: require('./bower.json').appPath || 'app',
@@ -75,7 +76,7 @@ gulp.task('start:client', ['start:server', 'styles'], function () {
 
 gulp.task('start:server', function () {
   $.connect.server({
-    root: [yeoman.app, '.tmp'],
+    root: [yeoman.dist, '.tmp'],
     livereload: true,
     // Change this to '0.0.0.0' to access the server from outside.
     port: 9000
@@ -139,7 +140,9 @@ gulp.task('test', ['start:server:test'], function () {
 // inject bower components
 gulp.task('bower', function () {
   return gulp.src(paths.views.main)
-    .pipe(wiredep())
+    .pipe(wiredep({
+      ignorePath: '../'
+    }))
     .pipe(gulp.dest(yeoman.app));
 });
 
@@ -192,8 +195,10 @@ gulp.task('copy:extras', function () {
     .pipe(gulp.dest(yeoman.dist));
 });
 
-gulp.task('copy:fonts', function () {
-  return gulp.src(yeoman.app + '/fonts/**/*')
+gulp.task('copy:fonts', function() {
+  return gulp.src(mainBowerFiles('**/*.{eot,svg,ttf,woff,woff2}', function (err) {})
+    .concat(yeoman.app + '/fonts/**/*'))
+    .pipe(gulp.dest('.tmp/fonts'))
     .pipe(gulp.dest(yeoman.dist + '/fonts'));
 });
 

@@ -10,6 +10,7 @@
  */
 angular.module('formsApp', [
     'ngRoute',
+    'ngSanitize',
     'ngAnimate'
   ])
   .config(function ($routeProvider, $locationProvider) {
@@ -26,6 +27,9 @@ angular.module('formsApp', [
       });
 
     // configure html5
-    $locationProvider.html5Mode(true);
+    $locationProvider.html5Mode({
+      enabled: true,
+      requireBase: false
+    });
   });
 
