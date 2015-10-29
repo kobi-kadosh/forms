@@ -15,7 +15,7 @@ npm install -g grunt-cli bower yo generator-karma generator-angular
 ```
 
 ```
-npm install -g gulp karma-cli jasmine
+npm install -g gulp karma-cli jasmine webpack
 ```
 
 This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)

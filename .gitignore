@@ -1,6 +1,7 @@
 /node_modules
 /dist
 /.tmp
+/.wb
 /.sass-cache
 /bower_components
 

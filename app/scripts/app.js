@@ -1,5 +1,9 @@
-
 'use strict';
+
+import angular from 'angular';
+import uirouter from 'angular-ui-router';
+
+import mainCtrl from './controllers/main';
 
 /**
  * @ngdoc overview
@@ -10,7 +14,7 @@
  * Main module of the application.
  */
 angular.module('formsApp', [
-    'ui.router',
+    uirouter,
     'ngSanitize',
     'ngAnimate'
   ])
@@ -47,5 +51,6 @@ angular.module('formsApp', [
 
     // configure html5
     $locationProvider.html5Mode(true);
-  });
+  })
 
+  .controller('MainCtrl', mainCtrl);

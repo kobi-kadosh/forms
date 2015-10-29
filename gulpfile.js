@@ -2,13 +2,23 @@
 'use strict';
 
 var gulp = require('gulp');
+var gutil = require("gulp-util");
 var $ = require('gulp-load-plugins')();
 var openURL = require('open');
 var lazypipe = require('lazypipe');
 var rimraf = require('rimraf');
 var wiredep = require('wiredep').stream;
 var runSequence = require('run-sequence');
+
 var mainBowerFiles = require('main-bower-files');
+
+var webpack = require("webpack");
+var WebpackDevServer = require("webpack-dev-server");
+var webpackConfig = require("./webpack.config");
+
+var inject = require('gulp-inject');
+
+var path = require("path");
 
 var yeoman = {
   app: require('./bower.json').appPath || 'app',
@@ -154,7 +164,63 @@ gulp.task('clean:dist', function (cb) {
   rimraf('./dist', cb);
 });
 
-gulp.task('client:build', ['html', 'styles'], function () {
+
+gulp.task('webpack', function (cb) {
+  runSequence('webpack:clean',
+    ['webpack:build'],
+    ['webpack:inject'],
+    'webpack:dist', cb);
+});
+
+gulp.task('webpack:clean', function (cb) {
+  rimraf('./.wb', cb);
+});
+
+gulp.task("webpack:build", function(callback) {
+  // run webpack
+  webpack(webpackConfig, function(err, stats) {
+    if(err) throw new gutil.PluginError("webpack", err);
+    gutil.log("[webpack]", stats.toString({
+      // output options
+    }));
+
+    callback();
+  });
+});
+
+gulp.task("webpack:inject", function() {
+  var target = gulp.src('./app/index.html');
+
+  var sources = gulp.src('.wb/bundle-*.js', {read: false});
+
+  return target.pipe(inject(sources, { name: 'bundle', ignorePath: '.wb', addPrefix: 'scripts', addRootSlash: false }))
+    .pipe(gulp.dest('./app'));
+});
+
+gulp.task("webpack:dist", function() {
+  return gulp.src('.wb/bundle-*.js*')
+    .pipe(gulp.dest(yeoman.dist + '/scripts'));
+});
+
+gulp.task("webpack-dev-server", function(callback) {
+  // Start a webpack-dev-server
+  var compiler = webpack({
+    // configuration
+  });
+
+  new WebpackDevServer(compiler, {
+    // server and middleware options
+  }).listen(8080, "localhost", function(err) {
+    if(err) throw new gutil.PluginError("webpack-dev-server", err);
+    // Server listening
+    gutil.log("[webpack-dev-server]", "http://localhost:8080/webpack-dev-server/index.html");
+
+    // keep the server alive or continue?
+    // callback();
+  });
+});
+
+gulp.task('client:build', ['html', 'styles', 'webpack'], function () {
   var jsFilter = $.filter('**/*.js');
   var cssFilter = $.filter('**/*.css');
   var assets = $.useref.assets({ searchPath: ['.tmp', yeoman.app, '.']});
